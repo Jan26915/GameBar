@@ -195,6 +195,32 @@ app.get('/stack', isAuthenticated, (req, res) => {
 }
 );
 
+app.get('/alchemy', isAuthenticated, (req, res) => {
+    const data = {
+        description: `Based on the mobile game, this singleplayer game challenges player's problem solving and thinking skills (sort of), by challenging them to create new elements from 4 beginner ones. <br><br> This project is the fourth completed GameBar game, and my personal favorite - Chris`,
+        developer: 'Christian Martin',
+        changelog: `<details>
+                <summary class="summaries">Changelog</summary>
+                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+                <div class="changelog-header">v1.0.0 - Alchemy Released- 2/14/2026</div>
+                <li class="innerli">Initial release of Alchemy on Gamebar</li>
+            </details>`,
+        game: 'Alchemy',
+        preview: `<img id="previewImg" src="/alchemy/alchemypreview.png" alt="Alchemy Preview" height="500">`,
+        playButton: `<button id="button" onclick="window.location.href='/game_alchemy'">Play</button>`,
+        guide: `Drag and drop elements onto the game area to combine them. If the combination is correct, a new element will be created! You can also double click an element to spawn another one, and right click to delete it. Try to discover all 100+ elements!`,
+        specifics: ` <details>
+                <summary class="summaries">Specifics</summary>
+                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+                <h3>Keybinds:</h3>  
+                <li class="innerli">[LMB] 'click' - Click to quick drop, drag to move elements. Double click to duplicate an element</li>
+                <li class="innerli">[RMB] 'contextmenu' - Delete element</li>
+
+                </details>` 
+    }
+    res.render('page', { user: req.session.user, pageName: 'Gamebar', version: 'v0.1.7', data: data });
+});
+
 app.get('/game_2048', isAuthenticated, (req, res) => {
     res.render('games/2048/game_2048', { user: req.session.user, pageName: '2048', version: 'v1.1.1' });
 });
@@ -205,6 +231,10 @@ app.get('/game_snake', isAuthenticated, (req, res) => {
 
 app.get('/game_stack', isAuthenticated, (req, res) => {
     res.render('games/stack/game_stack', { user: req.session.user, pageName: 'Stack', version: 'v1.0.0' });
+});
+
+app.get('/game_alchemy', isAuthenticated, (req, res) => {
+    res.render('games/alchemy/game_alchemy', { user: req.session.user, pageName: 'Alchemy', version: 'v1.0.0' });
 });
 
 app.get('/logout', (req, res) => {
