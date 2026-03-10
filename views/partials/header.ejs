@@ -60,6 +60,73 @@
             text-decoration: none;
             color: inherit;
         }
+
+        #partials-header-gamepoints-button {
+            height: 45px;
+            width: 45px;
+        }
+
+        #partials-header-gamepoints-station {
+            display: inline-flex;
+            position: absolute;
+            cursor: pointer;
+            right: 20px;
+            top: 10px;
+        }
+
+        #partials-header-gamepoints-label {
+            margin-left: 4px;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+
+        #gamePointsWindow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #0f0f0f;
+            border: solid 1px #4d664d;
+            border-radius: 5px;
+            padding: 20px;
+            display: none;
+            z-index: 10;
+        }
+
+        #mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 5;
+        }
+
+        #closeWindow {
+            display: block;
+            margin: 0 auto;
+            margin-top: 20px;
+            padding: 5px 10px;
+            background-color: rgb(23, 34, 34);
+            border: solid 1px #4d664d;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #4d664d;
+        }
+
+        .purchaseButtons {
+            width: 150px;
+            height: 150px;
+            margin-top: 10px;
+            color: #4d664d;
+            background-color: rgb(23, 34, 34);
+            border: solid 1px #4d664d;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 120ms ease, box-shadow 120ms ease;
+        }
     </style>
 </head>
 
@@ -71,7 +138,32 @@
         </a>
         <p class='partials-header' id="partials-header-user">Logged in as <%- user %></p><button class="partials-header"
             id="partials-header-logout-button" onclick="location.href='/logout'">Logout</button>
+
+        <div onclick="gamePointsShop('open')" id="partials-header-gamepoints-station">
+            <img src="/index/bag.png" id="partials-header-gamepoints-button">
+            <h3 id="partials-header-gamepoints-label">Game Points</h3>
+        </div>
+
         <hr class='partials-header' id="partials-header-hr" />
+    </div>
+    <div id="mask"></div>
+    <div id="gamePointsWindow">
+        <h3 style="text-align: center;">Game Points Shop</h3>
+        <div id="purchaseButtonDiv">
+            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">100 Game Points<br>99
+                Digipogs</button>
+            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">210 Game Points<br>199
+                Digipogs</button>
+            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">400 Game Points<br>349
+                Digipogs</button>
+            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">875 Game Points<br>699
+                Digipogs</button>
+            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">1350 Game Points<br>999
+                Digipogs</button>
+        </div>
+
+
+        <button id="closeWindow" onclick="gamePointsShop('close')">Close</button>
     </div>
 
 </body>
@@ -117,6 +209,31 @@
         "RIP Quiz Queue, you won't be missed",
         "Just get better"
     ];
+
+    function gamePointsShop(state) {
+        let shop = document.getElementById('gamePointsWindow');
+        let mask = document.getElementById('mask');
+
+        if (state === 'open') {
+            shop.style.display = 'block';
+            mask.style.display = 'block';
+        } else {
+            shop.style.display = 'none';
+            mask.style.display = 'none';
+        }
+    }
+
+    let buttonsVar = document.getElementsByClassName('purchaseButtons');
+    Array.prototype.forEach.call(buttonsVar, element => {
+        element.addEventListener('mouseover', () => {
+            element.style.transform = 'scale(0.95)';
+            element.style.boxShadow = '0 0 15px #4d664d';
+        });
+        element.addEventListener('mouseout', () => {
+            element.style.transform = 'scale(1)';
+            element.style.boxShadow = 'none';
+        });
+    });
 </script>
 
 </html>
