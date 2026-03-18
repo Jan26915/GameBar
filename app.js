@@ -4,9 +4,11 @@ const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
-const { io } = require('socket.io-client');
+const { Server } = require('socket.io');
+const ioClient = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
+const http = require('http');
 
 // DATABASE SETUP
 const db = new sqlite3.Database('./db/app.db', (err) => {
@@ -27,15 +29,17 @@ const API_KEY = process.env.API_KEY || 'your_api_key';
 // MIDDLEWARE
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(session({
+const sessionMiddleware = session({
     store: new SQLiteStore({ db: 'sessions.db', dir: './db' }),
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: true
-}));
+});
+
+app.use(sessionMiddleware);
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) next()
@@ -43,15 +47,21 @@ function isAuthenticated(req, res, next) {
 };
 
 // SOCKET.IO CLIENT TO AUTH SERVER
-const socket = io(AUTH_URL, {
+const authSocket = ioClient(AUTH_URL, {
     extraHeaders: {
         api: API_KEY
     }
 });
 
+
+const server = http.createServer(app);
+const io = new Server(server);
+let clientID;
+
 // ROUTES
 app.get('/', isAuthenticated, (req, res) => {
-    res.render('index', { user: req.session.user, pageName: 'Gamebar', version: 'v0.2.2' });
+    res.render('index', { user: req.session.user, pageName: 'Gamebar', version: 'v0.2.1' });
+    clientID = req.session.token.id;
 });
 
 app.get('/changes', isAuthenticated, (req, res) => {
@@ -63,6 +73,7 @@ app.get('/login', (req, res) => {
         let tokenData = jwt.decode(req.query.token);
         req.session.token = tokenData;
         req.session.user = tokenData.displayName;
+
 
         // SAVE USER TO DATABSE IF NOT EXISTS
         db.run('INSERT OR IGNORE INTO users (username) VALUES (?)', [tokenData.displayName], function (err) {
@@ -81,54 +92,54 @@ app.get('/login', (req, res) => {
 app.get('/2048', isAuthenticated, (req, res) => {
     const data = {
         description: `Based on the classic computer game, players must shift tiles with different numbers, combining like
-                numbers with the goal of reaching a 2048 tile. <br><br>This project originally began as a solo venture,
-                separate from GameBar, but as work piled up and GameBar was founded, it was just natural to include it.
-                It was then completed, themed around GameBar, and is the first completed GameBar game.`,
+        numbers with the goal of reaching a 2048 tile. <br><br>This project originally began as a solo venture,
+        separate from GameBar, but as work piled up and GameBar was founded, it was just natural to include it.
+        It was then completed, themed around GameBar, and is the first completed GameBar game.`,
         developer: 'Christian Martin',
         changelog: `<details>
-                <summary class="summaries">Changelog</summary>
-                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
-                <div class="changelog-header">v1.0.0 - 2048 Released - 2/06/2026</div>
-                <li class="innerli">Initial release of 2048 on Gamebar</li>
-                <div class="changelog-header">v1.0.1 - Optimization change - 2/14/2026</div>
-                <li class="innerli">Removed unnecessary game loop</li>
-            </details>`,
+        <summary class="summaries">Changelog</summary>
+        <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+        <div class="changelog-header">v1.0.0 - 2048 Released - 2/06/2026</div>
+        <li class="innerli">Initial release of 2048 on Gamebar</li>
+        <div class="changelog-header">v1.0.1 - Optimization change - 2/14/2026</div>
+        <li class="innerli">Removed unnecessary game loop</li>
+        </details>`,
         game: '2048',
         preview: `<img id="previewImg" src="/2048/2048preview.png" alt="2048 preview" height="500">`,
         playButton: `<button id="button" onclick="window.location.href='/game_2048'">Play</button>`,
         guide: `Use the arrow keys to move the tiles. When two tiles with the same number touch, they merge into a
-                greater one! The goal is to create a tile with the number 2048. Be careful, though: if the board fills
-                up and you can't make any more moves, it's game over!`,
+        greater one! The goal is to create a tile with the number 2048. Be careful, though: if the board fills
+        up and you can't make any more moves, it's game over!`,
         specifics: ` <details>
-                <summary class="summaries">Specifics</summary>
-                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
-                <h3>Keybinds:</h3>
-                <li class="innerli">[▲] 'ArrowUp' - Move tiles up</li>
-                <li class="innerli">[▼] 'ArrowDown' - Move tiles down</li>
-                <li class="innerli">[◄] 'ArrowLeft' - Move tiles left</li>
-                <li class="innerli">[►] 'ArrowRight' - Move tiles right</li>
-
-                <h3>Tiles:</h3>
-                <img src="/2048/square_2.png" class="tileImgs"><img src="/2048/square_4.png" class="tileImgs"><img
-                    src="/2048/square_8.png" class="tileImgs"><img src="/2048/square_16.png" class="tileImgs"><img
-                    src="/2048/square_32.png" class="tileImgs"><img src="/2048/square_64.png" class="tileImgs"><img
-                    src="/2048/square_128.png" class="tileImgs"><img src="/2048/square_256.png" class="tileImgs"><img
-                    src="/2048/square_512.png" class="tileImgs"><img src="/2048/square_1024.png" class="tileImgs"><img
-                    src="/2048/square_2048.png" class="tileImgs">
-
-                <h3>Wordified Logic:</h3>
-                <li class="innerli">Upon start: Game loop begins, canvas is drawn and redrawn every frame (background,
-                    tiles, and lines)</li>
-                <li class="innerli">Singular tile spawns onload; Either a 2 (90%) or a 4 (10%). All spawn logic follows
-                    this rule</li>
-                <li class="innerli">On keypress: Detects if Arrow key. If true, moves tiles as far as possible in that
-                    direction, and combines if it collides with a like tile. New tile is subsequently spawned.</li>
-                <li class="innerli">Game then checks for Win or Loss. If either is true, overlay is drawn accordingly.
-                </li>
-
-
-
-            </details>`
+        <summary class="summaries">Specifics</summary>
+        <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+        <h3>Keybinds:</h3>
+        <li class="innerli">[▲] 'ArrowUp' - Move tiles up</li>
+        <li class="innerli">[▼] 'ArrowDown' - Move tiles down</li>
+        <li class="innerli">[◄] 'ArrowLeft' - Move tiles left</li>
+        <li class="innerli">[►] 'ArrowRight' - Move tiles right</li>
+        
+        <h3>Tiles:</h3>
+        <img src="/2048/square_2.png" class="tileImgs"><img src="/2048/square_4.png" class="tileImgs"><img
+        src="/2048/square_8.png" class="tileImgs"><img src="/2048/square_16.png" class="tileImgs"><img
+        src="/2048/square_32.png" class="tileImgs"><img src="/2048/square_64.png" class="tileImgs"><img
+        src="/2048/square_128.png" class="tileImgs"><img src="/2048/square_256.png" class="tileImgs"><img
+        src="/2048/square_512.png" class="tileImgs"><img src="/2048/square_1024.png" class="tileImgs"><img
+        src="/2048/square_2048.png" class="tileImgs">
+        
+        <h3>Wordified Logic:</h3>
+        <li class="innerli">Upon start: Game loop begins, canvas is drawn and redrawn every frame (background,
+        tiles, and lines)</li>
+        <li class="innerli">Singular tile spawns onload; Either a 2 (90%) or a 4 (10%). All spawn logic follows
+        this rule</li>
+        <li class="innerli">On keypress: Detects if Arrow key. If true, moves tiles as far as possible in that
+        direction, and combines if it collides with a like tile. New tile is subsequently spawned.</li>
+        <li class="innerli">Game then checks for Win or Loss. If either is true, overlay is drawn accordingly.
+        </li>
+        
+        
+        
+        </details>`
     }
     res.render('page', { user: req.session.user, pageName: 'Gamebar', version: 'v0.2.2', data: data });
 });
@@ -138,35 +149,35 @@ app.get('/snake', isAuthenticated, (req, res) => {
         description: `Based on the classic online game, users simply have the goal of eating as many apples and growing as big as possible without crossing over their own tail or hitting the borders. <br><br> This project was one of the first ideas for GameBar, and was officially started by Jan, becoming the second completed GameBar game!`,
         developer: 'Jan Cruz-Valentin',
         changelog: `<details>
-                <summary class="summaries">Changelog</summary>
-                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
-                <div class="changelog-header">v1.0.0 - Snake Released - 3/06/2026</div>
-                <li class="innerli">Initial release of Snake on Gamebar</li>
-                <div class="changelog-header">v1.0.1 - Minor CSS Update - 3/06/2026</div>
-                <li class="innerli">Updated Score/Time and in-game button CSS for visual appeal</li>
-            </details>`,
+        <summary class="summaries">Changelog</summary>
+        <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+        <div class="changelog-header">v1.0.0 - Snake Released - 3/06/2026</div>
+        <li class="innerli">Initial release of Snake on Gamebar</li>
+        <div class="changelog-header">v1.0.1 - Minor CSS Update - 3/06/2026</div>
+        <li class="innerli">Updated Score/Time and in-game button CSS for visual appeal</li>
+        </details>`,
         game: 'Snake',
         preview: `<img id="previewImg" src="/snake/snakepreview.png" alt="Snake Preview" height="500">`,
         playButton: `<button id="button" onclick="window.location.href='/game_snake'">Play</button>`,
         guide: `Use the arrow keys to move the snake in the desired direction. Eat the red apples to grow longer, but be careful not to run into your own tail or the walls!`,
         specifics: ` <details>
-                <summary class="summaries">Specifics</summary>
-                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
-                <h3>Keybinds:</h3>
-                <li class="innerli">[▲] 'ArrowUp' / [W] 'w' - Move snake up</li>
-                <li class="innerli">[▼] 'ArrowDown' / [S] 's' - Move snake down</li>
+        <summary class="summaries">Specifics</summary>
+        <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+        <h3>Keybinds:</h3>
+        <li class="innerli">[▲] 'ArrowUp' / [W] 'w' - Move snake up</li>
+        <li class="innerli">[▼] 'ArrowDown' / [S] 's' - Move snake down</li>
                 <li class="innerli">[◄] 'ArrowLeft' / [A] 'a' - Move snake left</li>
                 <li class="innerli">[►] 'ArrowRight' / [D] 'd' - Move snake right</li>
-
+                
                 <h3>Wordified Logic:</h3>
                 <li class="innerli">Upon start: Difficulty and map size are selected, then game loop begins. Canvas is drawn and redrawn every frame (background, snake, apple, and score)</li>
                 <li class="innerli">On keypress: Detects if Arrow key. If true, changes direction of snake accordingly.</li>
                 <li class="innerli">Every frame, snake moves 1 unit in current direction. If it collides with apple, it grows and a
-                    new apple is spawned. If it collides with itself or the border, it's game over and overlay is drawn.</li>
+                new apple is spawned. If it collides with itself or the border, it's game over and overlay is drawn.</li>
                 <li class="innerli">If the snake does not collide with itself or the border, and manages to fill the board, the player wins.</li>
                 
                 
-            </details>`,
+                </details>`,
     }
     res.render('page', { user: req.session.user, pageName: 'Gamebar', version: 'v0.2.2', data: data });
 }
@@ -177,18 +188,18 @@ app.get('/stack', isAuthenticated, (req, res) => {
         description: `Based on the mobile game, this singleplayer game challenges player's timing and reaction time abilities with the mission of creating as high of a tower as possible, as mistakes make that goal harder. <br><br> This project is the third completed GameBar game, and the quickest one completed yet, being finished in just a couple days.`,
         developer: 'Kris Bowman',
         changelog: `<details>
-                <summary class="summaries">Changelog</summary>
-                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
-                <div class="changelog-header">v1.0.0 - Stack Released - 3/06/2026</div>
-                <li class="innerli">Initial release of Stack on Gamebar</li>
+            <summary class="summaries">Changelog</summary>
+            <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+            <div class="changelog-header">v1.0.0 - Stack Released - 3/06/2026</div>
+            <li class="innerli">Initial release of Stack on Gamebar</li>
             </details>`,
         game: 'Stack',
         preview: `<img id="previewImg" src="/stack/stackpreview.png" alt="Stack Preview" height="500">`,
         playButton: `<button id="button" onclick="window.location.href='/game_stack'">Play</button>`,
         guide: `Select your difficulty and press the spacebar to drop the moving block as evenly onto the stack as possible. The more unevenly you drop it, the smaller the next block will be, making it harder to stack. If you miss the stack entirely, it's game over! Try to stack as high as possible!`,
         specifics: ` <details>
-                <summary class="summaries">Specifics</summary>
-                <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+            <summary class="summaries">Specifics</summary>
+            <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
                 <h3>Keybinds:</h3>  
                 <li class="innerli">[ ________ ] 'Space' - Drop the moving block</li>  
                 </details>`
@@ -253,21 +264,40 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
-socket.on('connect', () => {
-    console.log('Connected to auth server');
-    socket.emit('getActiveClass');
+io.on('connection', (socket) => {
+    socket.on('transaction', (pin, amount) => {
+        const data = {
+            from: clientID,
+            to: 50,
+            amount: amount,
+            reason: 'GameBar Transaction',
+            pin: pin,
+            pool: true
+        };
+
+        console.log(data);
+
+        authSocket.emit('transferDigipogs', data);
+    });
+
+    socket.on('transferResponse', (response) => {
+        console.log('Received transfer response:', response);
+    });
+
+
+    socket.on('setClass', (classData) => {
+        console.log('Received class data:', classData);
+        // Handle class data as needed
+    });
 });
 
-socket.on('disconnect', () => {
+io.on('disconnect', () => {
     console.log('Disconnected from auth server');
 });
 
-socket.on('setClass', (classData) => {
-    console.log('Received class data:', classData);
-    // Handle class data as needed
-});
+
 
 // START SERVER
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });

@@ -128,6 +128,10 @@
             transition: transform 120ms ease, box-shadow 120ms ease;
         }
     </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();        
+    </script>
 </head>
 
 <body>
@@ -150,15 +154,15 @@
     <div id="gamePointsWindow">
         <h3 style="text-align: center;">Game Points Shop</h3>
         <div id="purchaseButtonDiv">
-            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">100 Game Points<br>99
+            <button class="purchaseButtons" onclick="buyPoints(100, 99)">100 Game Points<br>99
                 Digipogs</button>
-            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">210 Game Points<br>199
+            <button class="purchaseButtons" onclick="buyPoints(210, 199)">210 Game Points<br>199
                 Digipogs</button>
-            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">400 Game Points<br>349
+            <button class="purchaseButtons" onclick="buyPoints(400, 349)">400 Game Points<br>349
                 Digipogs</button>
-            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">875 Game Points<br>699
+            <button class="purchaseButtons" onclick="buyPoints(875, 699)">875 Game Points<br>699
                 Digipogs</button>
-            <button class="purchaseButtons" onclick="alert('Not implemented yet :D')">1350 Game Points<br>999
+            <button class="purchaseButtons" onclick="buyPoints(1350, 999)">1350 Game Points<br>999
                 Digipogs</button>
         </div>
 
@@ -209,6 +213,20 @@
         "RIP Quiz Queue, you won't be missed",
         "Just get better"
     ];
+
+    function buyPoints(value, pogs) {
+        let pin = parseInt(prompt("To purchase " + value + " Game Points, please enter your PIN and confirm the transaction."), 10);
+        console.log(pin);
+
+        if (Number.isInteger(pin)) {
+            socket.emit('transaction', pin, pogs);
+        } else {
+            alert("Transaction cancelled.");
+            return;
+        }
+
+        
+    }
 
     function gamePointsShop(state) {
         let shop = document.getElementById('gamePointsWindow');
