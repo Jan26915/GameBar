@@ -260,6 +260,9 @@
         });
     });
 
+    socket.on('transactionSuccess', () => {
+        alert("Transaction successful! Your Game Points balance has been updated. Refresh the home page to view the change :)");
+    }); 
 
 </script>
 

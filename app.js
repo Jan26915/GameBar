@@ -9,6 +9,7 @@ const ioClient = require('socket.io-client');
 const sqlite3 = require('sqlite3').verbose();
 const SQLiteStore = require('connect-sqlite3')(session);
 const http = require('http');
+const datamuse = require('datamuse');
 
 // DATABASE SETUP
 const db = new sqlite3.Database('./db/app.db', (err) => {
@@ -266,6 +267,28 @@ app.get('/alchemy', isAuthenticated, (req, res) => {
     res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.3.0', data: data });
 });
 
+app.get('/wordle', isAuthenticated, (req, res) => {
+    const data = {
+        description: 'placeholder',
+        developer: 'Christian Martin',
+        changelog: `<details>
+        <summary class="summaries">Changelog</summary>
+        <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+        <div class="changelog-header">v1.0.0 - Wordle Released - 3/2x/2026</div>
+        <li class="innerli">Initial release of Wordle on Gamebar</li>
+        </details>`,
+        game: 'Wordle',
+        preview: `<img id="previewImg" src="/wordle/wordlepreview.png" alt="Wordle Preview" height="500">`,
+        playButton: `<button id="button" onclick="play()">Play</button>`,
+        guide: 'placeholder',
+        specifics: ` <details>
+        <summary class="summaries">Specifics</summary>
+        <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+        </details>`
+    };
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 0, pageName: 'Gamebar', version: 'v0.3.0', data: data });
+});
+
 app.get('/game_2048', isAuthenticated, (req, res) => {
     res.render('games/2048/game_2048', { user: req.session.user, gp: req.session.gp, pageName: '2048', version: 'v1.1.1' });
 });
@@ -282,6 +305,10 @@ app.get('/game_alchemy', isAuthenticated, (req, res) => {
     res.render('games/alchemy/game_alchemy', { user: req.session.user, gp: req.session.gp, pageName: 'Alchemy', version: 'v1.0.2' });
 });
 
+app.get('/game_wordle', isAuthenticated, (req, res) => {
+    res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.0' });
+});
+
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login');
@@ -289,6 +316,8 @@ app.get('/logout', (req, res) => {
 
 var socketReturn = false;
 io.on('connection', (socket) => {
+    // DIGIPOG TRANSFERS
+    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     authSocket.on("transferResponse", (response) => {
         console.log("Transfer Response:", response);
         socketReturn = response.success;
@@ -317,6 +346,7 @@ io.on('connection', (socket) => {
                         return console.error(err.message);
                     }
                     console.log(`Added ${gamePoints} GP to user ${username}.`);
+                    socket.emit('transactionSuccess');
                 });
             }
         }, 1000);
@@ -341,6 +371,35 @@ io.on('connection', (socket) => {
                 });
             }
         });
+    });
+
+    // GAMES' SERVERSIDE LOGIC
+    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+
+    // WORDLE
+
+    socket.on('getDictionary', () => {
+        var dictionary = [];
+        for (let i = 97; i <= 122; i++) {
+            const letter = String.fromCharCode(i);
+            datamuse.request(`words?sp=${letter}????&max=1000`)
+                .then((json) => {
+                    let wordleArray = json
+                    wordleArray.forEach(wordObject => {
+                        word = wordObject.word;
+                        if (word.length === 5 && /^[a-zA-Z]+$/.test(word)) {
+                            word = word.toUpperCase();
+                            dictionary.push(word);
+                        }
+                    });
+                });
+            if (i === 122) {
+                setTimeout(() => {
+                    socket.emit('dictReturn', dictionary);
+                }, 2000);
+            }
+        };
     });
 });
 
