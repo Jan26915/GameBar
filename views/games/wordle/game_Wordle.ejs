@@ -1,6 +1,11 @@
 <%- include('../../partials/header') %>
     <title>GameBar - Wordle</title>
     <style>
+        #partials-header-version {
+            right: 855px;
+            top: 29px;
+        }
+
         .formInputs {
             width: 50px;
             height: 50px;
@@ -9,11 +14,14 @@
             text-align: center;
             text-transform: uppercase;
             margin-top: 5px;
-            background-color: white;
+            background-color: rgb(23, 34, 34);
+            border: solid 1px #4d664d;
+            color: white;
         }
 
         .formInputs:disabled {
-            background-color: lightgray;
+            background-color: #151b1b;
+            color: #000000;
         }
 
         #Game {
@@ -114,10 +122,11 @@
         letterElement.style.height = "35px";
         letterElement.style.margin = "3px";
         letterElement.style.display = "inline-block";
-        letterElement.style.border = "1px solid black";
+        letterElement.style.border = "1px solid #4d664d";
         letterElement.style.lineHeight = "35px";
-        letterElement.style.backgroundColor = "lightgray";
+        letterElement.style.backgroundColor = "rgb(23, 34, 34)";
         letterElement.style.textAlign = "center";
+        letterElement.style.textShadow = "none";
         letterElement.style.fontFamily = "Arial, sans-serif";
         letterElement.id = letter;
 
@@ -162,41 +171,41 @@
             }
 
             // Provide hints
-            var goldCount = 0;
+            var guessedCount = 0;
             for (let i = 0; i < 5; i++) {
                 const letter = guess[i];
                 const correctLetter = correct[i];
                 const element = document.getElementById(`${guessCount + 1}-letter${i + 1}`);
 
                 if (letter === correctLetter) {
-                    element.style.backgroundColor = "green";
-                    document.getElementById(letter).style.backgroundColor = "green";
+                    element.style.backgroundColor = "#6dffc2";
+                    document.getElementById(letter).style.backgroundColor = "#6dffc2";
                 } else if (correct.includes(letter)) {
                     const letterCount = guess.split(letter).length - 1;
                     const correctCount = correct.split(letter).length - 1;
 
                     if (letterCount > correctCount) {
                         if (goldCount >= correctCount) {
-                            element.style.backgroundColor = "gray";
+                            element.style.backgroundColor = "#394238";
                         } else {
-                            if (document.getElementById(letter).style.backgroundColor !== "green") {
-                                element.style.backgroundColor = "yellow";
-                                document.getElementById(letter).style.backgroundColor = "yellow";
+                            if (document.getElementById(letter).style.backgroundColor !== "#6dffc2") {
+                                element.style.backgroundColor = "#babf56";
+                                document.getElementById(letter).style.backgroundColor = "#babf56";
                             } else {
-                                element.style.backgroundColor = "gray";
+                                element.style.backgroundColor = "#394238";
                             }
                             goldCount++;
                         }
                     } else {
-                        element.style.backgroundColor = "yellow";
+                        element.style.backgroundColor = "#babf56";
                         
-                        if (document.getElementById(letter).style.backgroundColor !== "green") {
-                            document.getElementById(letter).style.backgroundColor = "yellow";
+                        if (document.getElementById(letter).style.backgroundColor !== "#6dffc2") {
+                            document.getElementById(letter).style.backgroundColor = "#babf56";
                         }
                     }
                 } else {
-                    element.style.backgroundColor = "gray";
-                    document.getElementById(letter).style.backgroundColor = "gray";
+                    element.style.backgroundColor = "#394238";
+                    document.getElementById(letter).style.backgroundColor = "#394238";
                 }
             }
 

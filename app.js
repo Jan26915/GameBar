@@ -91,7 +91,7 @@ app.get('/', isAuthenticated, (req, res) => {
             console.error(err.message);
         } else {
             req.session.gp = row ? row.gp : 0;
-            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.0' });
+            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.1' });
         }
     });
 
@@ -99,7 +99,7 @@ app.get('/', isAuthenticated, (req, res) => {
 });
 
 app.get('/changes', isAuthenticated, (req, res) => {
-    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.0' });
+    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.1' });
 });
 
 app.get('/2048', isAuthenticated, (req, res) => {
@@ -154,7 +154,7 @@ app.get('/2048', isAuthenticated, (req, res) => {
         
         </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.3.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.3.1', data: data });
 });
 
 app.get('/snake', isAuthenticated, (req, res) => {
@@ -192,7 +192,7 @@ app.get('/snake', isAuthenticated, (req, res) => {
                 
                 </details>`,
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.3.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.3.1', data: data });
 }
 );
 
@@ -228,7 +228,7 @@ app.get('/stack', isAuthenticated, (req, res) => {
                 </details>
             `
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.3.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.3.1', data: data });
 }
 );
 
@@ -264,29 +264,37 @@ app.get('/alchemy', isAuthenticated, (req, res) => {
                 <li class="innerli">If dropped on the sidebar from the game area, delete the element. If dropped on the game area, move the element there.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.3.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.3.1', data: data });
 });
 
 app.get('/wordle', isAuthenticated, (req, res) => {
     const data = {
-        description: 'placeholder',
+        description: 'Based on the classic online game, this singleplayer game challenges the player\'s vocabulary, challenging them to guess the hidden word in six tries or less. <br><br> This project is the fifth completed GameBar game, and the quickest completed one, being finished in only 3 hours. It was also the first GameBar game to use its own library, which proved to be a challenge. <br><br>Overall, I love how this turned out, I\'m glad I got bored on that particular weekend - Chris',
         developer: 'Christian Martin',
         changelog: `<details>
         <summary class="summaries">Changelog</summary>
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
-        <div class="changelog-header">v1.0.0 - Wordle Released - 3/2x/2026</div>
+        <div class="changelog-header">v1.0.0 - Wordle Released - 3/23/2026</div>
         <li class="innerli">Initial release of Wordle on Gamebar</li>
         </details>`,
         game: 'Wordle',
         preview: `<img id="previewImg" src="/wordle/wordlepreview.png" alt="Wordle Preview" height="500">`,
         playButton: `<button id="button" onclick="play()">Play</button>`,
-        guide: 'placeholder',
-        specifics: ` <details>
+        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are janky right now, will be fixed in the future.',
+        specifics: `<details>
         <summary class="summaries">Specifics</summary>
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
+                <h3>Wordified Logic:</h3>
+                <li class="innerli">Game starts, form area drawn</li>
+                <li class="innerli">Server retrieves dictionary, and sends a random 5 letter word from it to the client</li>
+                <li class="innerli">Player submits guess, game checks if it matches the random word</li>
+                <li class="innerli">If the word matches, the player wins. Otherwise, letters are color-coded to show guess accuracy</li>
+                <li class="innerli">Player gets 6 total guesses to find the word. If they fail, they lose and the correct word is revealed</li>
+
+                </details>
         </details>`
     };
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 0, pageName: 'Gamebar', version: 'v0.3.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v0.3.1', data: data });
 });
 
 app.get('/game_2048', isAuthenticated, (req, res) => {
