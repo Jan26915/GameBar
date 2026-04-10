@@ -46,10 +46,6 @@
                 overflow-y: scroll;
             }
 
-            ::-webkit-scrollbar {
-                width: 0px;
-            }
-
             #descField,
             #guideField,
             #middleGround {
@@ -82,6 +78,11 @@
 
             #guideField {
                 float: right;
+                direction: rtl;
+            }
+
+            #innerGuideField {
+                direction: ltr;
             }
 
             .sprites {
@@ -132,10 +133,12 @@
 
         <!-- Guide -->
         <div id="guideField">
-            <h2>Guide</h2>
-            <p><%- data.guide %></p>
-            <br><br><br><br><br><br><br>
-            <%- data.specifics %>
+            <div id="innerGuideField">
+                <h2>Guide</h2>
+                <p><%- data.guide %></p>
+                <br><br><br><br><br><br><br>
+                <%- data.specifics %>
+            </div>
 
 
         </div>
