@@ -226,32 +226,26 @@ function stackBlock() {
         block.width -= lastBlock.x - block.x
         block.x = lastBlock.x
         perfectCounter = 0
+        points++;
         displayMessage('Good! +1 point!')
     } else if (block.x + block.width > lastBlock.x + lastBlock.width) {
         block.width -= (block.x + block.width) - (lastBlock.x + lastBlock.width)
         perfectCounter = 0
+        points++;
         displayMessage('Good! +1 point!')
     }
 
     if (blocksList.length > 5) {
         const lastFiveBlocks = blocksList.slice(-5)
-        let alignedForBonus = false
 
         //check if the last 5 blocks are aligned within a certain threshold
         if (perfectCounter >= 5 && lastFiveBlocks.every(b => Math.abs(b.x - lastBlock.x) <= perfectThreshold)) {
-            alignedForBonus = true
-        }
-
-        if (alignedForBonus === true) {
             displayMessage('Bonus! +4 extra points!')
             points += 4
             perfectCounter = 0
-            alignedForBonus = false
-            return
         }
     }
 
-    points++
     blocksList.push(block)
 
     createNewBlock(currentMode)

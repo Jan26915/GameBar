@@ -138,6 +138,8 @@ app.get('/2048', isAuthenticated, (req, res) => {
         <li class="innerli">Removed unnecessary game loop</li>
         <div class="changelog-header">v1.0.2 - Minor Change - 3/26/2026</div>
         <li class="innerli">Removed false text</li>
+        </div class="changelog-header">v1.0.3 - Bug Fix - 4/14/2026</div>
+        <li class="innerli">Fixed game over screen not displaying</li>
         </details>`,
         game: '2048',
         preview: `<img id="previewImg" src="/2048/2048preview.png" alt="2048 preview" height="500">`,
@@ -188,6 +190,9 @@ app.get('/snake', isAuthenticated, (req, res) => {
         <li class="innerli">Initial release of Snake on Gamebar</li>
         <div class="changelog-header">v1.0.1 - Minor CSS Update - 3/06/2026</div>
         <li class="innerli">Updated Score/Time and in-game button CSS for visual appeal</li>
+        <div class="changelog-header">v1.0.2 - Bug Fix - 4/14/2026</div>
+        <li class="innerli">Fixed timer not changing at all</li>
+
         </details>`,
         game: 'Snake',
         preview: `<img id="previewImg" src="/snake/snakepreview.png" alt="Snake Preview" height="500">`,
@@ -225,6 +230,8 @@ app.get('/stack', isAuthenticated, (req, res) => {
             <li class="innerli">Initial release of Stack on Gamebar</li>
             <div class="changelog-header">v1.0.1 - Small Tweak - 3/20/2026</div>
             <li class="innerli">Deleted mode selection refresh on game over</li>
+            <div class="changelog-header">v1.0.2 - Bugfix - 4/14/2026</div>
+            <li class="innerli">Fixed freeze on 5x perfect stack bonus</li>
             </details>`,
         game: 'Stack',
         preview: `<img id="previewImg" src="/stack/stackpreview.png" alt="Stack Preview" height="500">`,
@@ -299,6 +306,8 @@ app.get('/wordle', isAuthenticated, (req, res) => {
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
         <div class="changelog-header">v1.0.0 - Wordle Released - 3/23/2026</div>
         <li class="innerli">Initial release of Wordle on Gamebar</li>
+        <div class="changelog-header">v1.0.1 - Bug Fix - 4/14/2026</div>
+        <li class="innerli">Fixed game not autofocusing on start</li>
         </details>`,
         game: 'Wordle',
         preview: `<img id="previewImg" src="/wordle/wordlepreview.png" alt="Wordle Preview" height="500">`,
@@ -323,34 +332,34 @@ app.get('/wordle', isAuthenticated, (req, res) => {
 app.get('/game_2048', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/2048/game_2048', { user: req.session.user, gp: req.session.gp, pageName: '2048', version: 'v1.0.2' });
+        res.render('games/2048/game_2048', { user: req.session.user, gp: req.session.gp, pageName: '2048', version: 'v1.0.3' });
     }
 });
 
 app.get('/game_snake', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/snake/game_snake', { user: req.session.user, gp: req.session.gp, pageName: 'Snake', version: 'v1.0.1' });
+        res.render('games/snake/game_snake', { user: req.session.user, gp: req.session.gp, pageName: 'Snake', version: 'v1.0.2' });
     }
 });
 
 app.get('/game_stack', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/stack/game_stack', { user: req.session.user, gp: req.session.gp, pageName: 'Stack', version: 'v1.0.0' });
+        res.render('games/stack/game_stack', { user: req.session.user, gp: req.session.gp, pageName: 'Stack', version: 'v1.0.1' });
     }
 });
 
 app.get('/game_alchemy', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
         res.render('games/alchemy/game_alchemy', { user: req.session.user, gp: req.session.gp, pageName: 'Alchemy', version: 'v1.2.0' });
     }
@@ -359,9 +368,9 @@ app.get('/game_alchemy', isAuthenticated, (req, res) => {
 app.get('/game_wordle', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.0' });
+        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.1' });
     }
 });
 
