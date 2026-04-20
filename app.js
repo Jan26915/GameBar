@@ -308,11 +308,14 @@ app.get('/wordle', isAuthenticated, (req, res) => {
         <li class="innerli">Initial release of Wordle on Gamebar</li>
         <div class="changelog-header">v1.0.1 - Bug Fix - 4/14/2026</div>
         <li class="innerli">Fixed game not autofocusing on start</li>
+        <div class="changelog-header">v1.0.2 - More Bug Fixes - 4/20/2026</div>
+        <li class="innerli">Changed box colors to properly match keyboard display, and removed janky and unfinished coloring features.</li>
+        <li class="innerli">Fixed datamuse dictionary search</li>
         </details>`,
         game: 'Wordle',
         preview: `<img id="previewImg" src="/wordle/wordlepreview.png" alt="Wordle Preview" height="500">`,
         playButton: `<button id="button" onclick="play()">Play</button>`,
-        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are janky right now, will be fixed in the future.',
+        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are mising features right now, will be changed in the future.',
         specifics: `<details>
         <summary class="summaries">Specifics</summary>
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
@@ -370,7 +373,7 @@ app.get('/game_wordle', isAuthenticated, (req, res) => {
         // if the user hasn't paid, send user back to home page
         res.redirect('/');
     } else {
-        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.1' });
+        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.2' });
     }
 });
 
@@ -534,7 +537,7 @@ io.on('connection', (socket) => {
         var dictionary = [];
         for (let i = 97; i <= 122; i++) {
             const letter = String.fromCharCode(i);
-            datamuse.request(`words ? sp = ${letter}????& max=1000`)
+            datamuse.request(`words?sp=${letter}????&max=1000`)
                 .then((json) => {
                     let wordleArray = json
                     wordleArray.forEach(wordObject => {

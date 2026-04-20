@@ -177,41 +177,66 @@
                 }
 
                 // Provide hints
-                var goldCount = 0;
+                // var goldCount = 0;
+                // for (let i = 0; i < 5; i++) {
+                //     const letter = guess[i];
+                //     const correctLetter = correct[i];
+                //     const element = document.getElementById(`${guessCount + 1}-letter${i + 1}`);
+
+                //     if (letter === correctLetter) {
+                //         element.style.backgroundColor = "#6dffc2";
+                //         document.getElementById(letter).style.backgroundColor = "#6dffc2";
+                //     } else if (correct.includes(letter)) {
+                //         const letterCount = guess.split(letter).length - 1;
+                //         const correctCount = correct.split(letter).length - 1;
+
+                //         if (letterCount > correctCount) {
+                //             if (goldCount >= correctCount) {
+                //                 element.style.backgroundColor = "#394238";
+                //             } else {
+                //                 if (document.getElementById(letter).style.backgroundColor !== "#6dffc2") {
+                //                     element.style.backgroundColor = "#babf56";
+                //                     document.getElementById(letter).style.backgroundColor = "#babf56";
+                //                 } else {
+                //                     element.style.backgroundColor = "#394238";
+                //                 }
+                //                 goldCount++;
+                //             }
+                //         } else {
+                //             element.style.backgroundColor = "#babf56";
+
+                //             if (document.getElementById(letter).style.backgroundColor !== "#6dffc2") {
+                //                 document.getElementById(letter).style.backgroundColor = "#babf56";
+                //             }
+                //         }
+                //     } else {
+                //         element.style.backgroundColor = "#394238";
+                //         document.getElementById(letter).style.backgroundColor = "#394238";
+                //     }
+                // }
+
                 for (let i = 0; i < 5; i++) {
                     const letter = guess[i];
                     const correctLetter = correct[i];
                     const element = document.getElementById(`${guessCount + 1}-letter${i + 1}`);
 
                     if (letter === correctLetter) {
-                        element.style.backgroundColor = "#6dffc2";
-                        document.getElementById(letter).style.backgroundColor = "#6dffc2";
+                        element.style.backgroundColor = "rgb(109, 255, 194)";
+                        document.getElementById(letter).style.backgroundColor = "rgb(109, 255, 194)";
+                        console.log(document.getElementById(letter).style.backgroundColor);
                     } else if (correct.includes(letter)) {
-                        const letterCount = guess.split(letter).length - 1;
-                        const correctCount = correct.split(letter).length - 1;
-
-                        if (letterCount > correctCount) {
-                            if (goldCount >= correctCount) {
-                                element.style.backgroundColor = "#394238";
-                            } else {
-                                if (document.getElementById(letter).style.backgroundColor !== "#6dffc2") {
-                                    element.style.backgroundColor = "#babf56";
-                                    document.getElementById(letter).style.backgroundColor = "#babf56";
-                                } else {
-                                    element.style.backgroundColor = "#394238";
-                                }
-                                goldCount++;
-                            }
-                        } else {
-                            element.style.backgroundColor = "#babf56";
-
-                            if (document.getElementById(letter).style.backgroundColor !== "#6dffc2") {
-                                document.getElementById(letter).style.backgroundColor = "#babf56";
-                            }
+                        element.style.backgroundColor = "rgb(186, 191, 86)";
+                        console.log(document.getElementById(letter).style.backgroundColor);
+                        if (document.getElementById(letter).style.backgroundColor !== "rgb(109, 255, 194)") {
+                            document.getElementById(letter).style.backgroundColor = "rgb(186, 191, 86)";
                         }
                     } else {
-                        element.style.backgroundColor = "#394238";
-                        document.getElementById(letter).style.backgroundColor = "#394238";
+                        element.style.backgroundColor = "rgb(57, 66, 56)";
+                        console.log(document.getElementById(letter).style.backgroundColor);
+                        if (document.getElementById(letter).style.backgroundColor !== "rgb(109, 255, 194)" && document.getElementById(letter).style.backgroundColor !== "rgb(186, 191, 86)") {
+                            document.getElementById(letter).style.backgroundColor = "rgb(57, 66, 56)";
+                        }
+                        console.log(document.getElementById(letter).style.backgroundColor);
                     }
                 }
 
