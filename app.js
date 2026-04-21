@@ -113,13 +113,13 @@ app.get('/', isAuthenticated, (req, res) => {
             console.error(err.message);
         } else {
             req.session.gp = row ? row.gp : 0;
-            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.0' });
+            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.1' });
         }
     });
 });
 
 app.get('/changes', isAuthenticated, (req, res) => {
-    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.0' });
+    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.1' });
 });
 
 app.get('/2048', isAuthenticated, (req, res) => {
@@ -176,7 +176,7 @@ app.get('/2048', isAuthenticated, (req, res) => {
         </li>
         </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.4.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/snake', isAuthenticated, (req, res) => {
@@ -215,7 +215,7 @@ app.get('/snake', isAuthenticated, (req, res) => {
                 <li class="innerli">If the snake does not collide with itself or the border, and manages to fill the board, the player wins.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.4.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 }
 );
 
@@ -252,7 +252,7 @@ app.get('/stack', isAuthenticated, (req, res) => {
                 <li class="innerli">If the player clicks when the block is not aligned at all, the game ends and displays a message based on the player's score and perfect counter.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.4.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/alchemy', isAuthenticated, (req, res) => {
@@ -294,7 +294,7 @@ app.get('/alchemy', isAuthenticated, (req, res) => {
                 <li class="innerli">If dropped on the sidebar from the game area, delete the element. If dropped on the game area, move the element there.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.4.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/wordle', isAuthenticated, (req, res) => {
@@ -308,11 +308,14 @@ app.get('/wordle', isAuthenticated, (req, res) => {
         <li class="innerli">Initial release of Wordle on Gamebar</li>
         <div class="changelog-header">v1.0.1 - Bug Fix - 4/14/2026</div>
         <li class="innerli">Fixed game not autofocusing on start</li>
+        <div class="changelog-header">v1.0.2 - More Bug Fixes - 4/20/2026</div>
+        <li class="innerli">Changed box colors to properly match keyboard display, and removed janky and unfinished coloring features.</li>
+        <li class="innerli">Fixed datamuse dictionary search</li>
         </details>`,
         game: 'Wordle',
         preview: `<img id="previewImg" src="/wordle/wordlepreview.png" alt="Wordle Preview" height="500">`,
         playButton: `<button id="button" onclick="play()">Play</button>`,
-        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are janky right now, will be fixed in the future.',
+        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are mising features right now, will be changed in the future.',
         specifics: `<details>
         <summary class="summaries">Specifics</summary>
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
@@ -326,7 +329,7 @@ app.get('/wordle', isAuthenticated, (req, res) => {
                 </details>
         </details>`
     };
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v0.4.0', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/game_2048', isAuthenticated, (req, res) => {
@@ -370,7 +373,7 @@ app.get('/game_wordle', isAuthenticated, (req, res) => {
         // if the user hasn't paid, send user back to home page
         res.redirect('/');
     } else {
-        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.1' });
+        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.2' });
     }
 });
 
@@ -534,7 +537,7 @@ io.on('connection', (socket) => {
         var dictionary = [];
         for (let i = 97; i <= 122; i++) {
             const letter = String.fromCharCode(i);
-            datamuse.request(`words ? sp = ${letter}????& max=1000`)
+            datamuse.request(`words?sp=${letter}????&max=1000`)
                 .then((json) => {
                     let wordleArray = json
                     wordleArray.forEach(wordObject => {
