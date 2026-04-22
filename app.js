@@ -429,7 +429,7 @@ io.on('connection', (socket) => {
         console.log('Play Game Data:', data);
         console.log(`User ${user} is attempting to play ${game} that costs ${cost} GP.`);
 
-        db.get(`SELECT ${game} FROM onetime WHERE user_id = ?`, [user], (err, row) => {
+        db.get(`SELECT ? FROM onetime WHERE user_id = ?`, [game, user], (err, row) => {
             if (err) {
                 console.error(`The game ${game} is not in the onetime table, or there was an error retrieving it.Continuing as a normal game.`);
                 //if the game is not in the onetime table, proceed with normal transaction
@@ -450,6 +450,7 @@ io.on('connection', (socket) => {
                                 }
                                 paid = true;
                                 socket.emit('relocate');
+                                console.log('not in onetime')
                             });
                         });
                     }
@@ -457,12 +458,13 @@ io.on('connection', (socket) => {
             }
 
             //if the game is in the onetime table, check if the user has already paid for it
-            if (row && row[game] === 1) {
+            if (row && row[game] == 1) {
                 //game is already paid for, skip GP deduction
                 console.log(`User ${user} has already paid for the onetime game ${game}.`);
                 paid = true;
                 socket.emit('onetimePaid');
-            } else if (row && row[game] === 0) {
+                console.loog('onetime, paid');
+            } else if (row && row[game] == 0) {
                 //check if the user has enough gp
                 db.get('SELECT gp FROM users WHERE username = ?', [user], (err, row) => {
                     if (err) {
@@ -492,6 +494,7 @@ io.on('connection', (socket) => {
                                 //allow relocate to function properly
                                 paid = true;
                                 socket.emit('relocate');
+                                console.log('in onetime, not paid');
                             });
                         });
                     }
@@ -514,6 +517,7 @@ io.on('connection', (socket) => {
                                 }
                                 paid = true;
                                 socket.emit('relocate');
+                                console.log('In onetime, not a number');
                             });
                         });
                     }
