@@ -83,7 +83,7 @@
 
         </style>
     </head>
-
+    <%- include('../../partials/gameSessions') %>
     <body>
         <div id="canvas">
             <canvas>
@@ -231,6 +231,11 @@
             setInitialPositions();
             difficultyScreen.remove();
             gameInterval = setInterval(gameUpdate, speed);
+            let seconds = 0;
+            timeInterval = setInterval(() => {
+                seconds++;
+                timeText.innerHTML = "Time: " + seconds;
+            }, 1000);
         }
 
         // Stops stuff from spawning in other things
@@ -257,6 +262,7 @@
                 context.font = "bold 32px Arial";
                 context.fillText("Game Over", canvas.width / 2 - 80, canvas.height / 2);
                 clearInterval(gameInterval);
+                clearInterval(timeInterval);
                 return;
             }
 
@@ -267,6 +273,7 @@
                 context.font = "bold 32px Arial";
                 context.fillText("You Win!", canvas.width / 2 - 75, canvas.height / 2);
                 clearInterval(gameInterval);
+                clearInterval(timeInterval);
                 return;
             }
 
@@ -310,7 +317,6 @@
 
             // Update the snake's body segments
             for (let i = playerBody.length - 1; i > 0; i--) {
-                console.log(playerBody)
                 playerBody[i] = playerBody[i - 1]; // Shift each segment to the position of the previous one
             }
 
@@ -367,7 +373,6 @@
         }
         // Function to handle player death
         function death(collisions) {
-            console.log("Player died due to: " + collisions);
             gameOver = true;
         }
     </script>

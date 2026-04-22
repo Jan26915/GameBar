@@ -25,7 +25,7 @@ const db = new sqlite3.Database('./db/app.db', (err) => {
 const PORT = process.env.PORT || 3000;
 const SESSION_SECRET = process.env.SESSION_SECRET || 'your_secret_key';
 const AUTH_URL = process.env.AUTH_URL || 'https://formbar.yorktechapps.com';
-const THIS_URL = process.env.THIS_URL || `http://localhost:${PORT}`;
+const THIS_URL = process.env.THIS_URL || `http://172.16.3.234:${PORT}`;
 const API_KEY = process.env.API_KEY || 'your_api_key';
 
 // MIDDLEWARE
@@ -113,13 +113,13 @@ app.get('/', isAuthenticated, (req, res) => {
             console.error(err.message);
         } else {
             req.session.gp = row ? row.gp : 0;
-            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.1' });
         }
     });
 });
 
 app.get('/changes', isAuthenticated, (req, res) => {
-    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.1' });
 });
 
 app.get('/2048', isAuthenticated, (req, res) => {
@@ -138,6 +138,8 @@ app.get('/2048', isAuthenticated, (req, res) => {
         <li class="innerli">Removed unnecessary game loop</li>
         <div class="changelog-header">v1.0.2 - Minor Change - 3/26/2026</div>
         <li class="innerli">Removed false text</li>
+        <div class="changelog-header">v1.0.3 - Bug Fix - 4/14/2026</div>
+        <li class="innerli">Fixed game over screen not displaying</li>
         </details>`,
         game: '2048',
         preview: `<img id="previewImg" src="/2048/2048preview.png" alt="2048 preview" height="500">`,
@@ -174,7 +176,7 @@ app.get('/2048', isAuthenticated, (req, res) => {
         </li>
         </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.3.6', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/snake', isAuthenticated, (req, res) => {
@@ -188,6 +190,9 @@ app.get('/snake', isAuthenticated, (req, res) => {
         <li class="innerli">Initial release of Snake on Gamebar</li>
         <div class="changelog-header">v1.0.1 - Minor CSS Update - 3/06/2026</div>
         <li class="innerli">Updated Score/Time and in-game button CSS for visual appeal</li>
+        <div class="changelog-header">v1.0.2 - Bug Fix - 4/14/2026</div>
+        <li class="innerli">Fixed timer not changing at all</li>
+
         </details>`,
         game: 'Snake',
         preview: `<img id="previewImg" src="/snake/snakepreview.png" alt="Snake Preview" height="500">`,
@@ -210,7 +215,7 @@ app.get('/snake', isAuthenticated, (req, res) => {
                 <li class="innerli">If the snake does not collide with itself or the border, and manages to fill the board, the player wins.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.3.6', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 }
 );
 
@@ -225,6 +230,8 @@ app.get('/stack', isAuthenticated, (req, res) => {
             <li class="innerli">Initial release of Stack on Gamebar</li>
             <div class="changelog-header">v1.0.1 - Small Tweak - 3/20/2026</div>
             <li class="innerli">Deleted mode selection refresh on game over</li>
+            <div class="changelog-header">v1.0.2 - Bugfix - 4/14/2026</div>
+            <li class="innerli">Fixed freeze on 5x perfect stack bonus</li>
             </details>`,
         game: 'Stack',
         preview: `<img id="previewImg" src="/stack/stackpreview.png" alt="Stack Preview" height="500">`,
@@ -245,7 +252,7 @@ app.get('/stack', isAuthenticated, (req, res) => {
                 <li class="innerli">If the player clicks when the block is not aligned at all, the game ends and displays a message based on the player's score and perfect counter.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.3.6', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/alchemy', isAuthenticated, (req, res) => {
@@ -287,7 +294,7 @@ app.get('/alchemy', isAuthenticated, (req, res) => {
                 <li class="innerli">If dropped on the sidebar from the game area, delete the element. If dropped on the game area, move the element there.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.3.6', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/wordle', isAuthenticated, (req, res) => {
@@ -299,11 +306,16 @@ app.get('/wordle', isAuthenticated, (req, res) => {
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
         <div class="changelog-header">v1.0.0 - Wordle Released - 3/23/2026</div>
         <li class="innerli">Initial release of Wordle on Gamebar</li>
+        <div class="changelog-header">v1.0.1 - Bug Fix - 4/14/2026</div>
+        <li class="innerli">Fixed game not autofocusing on start</li>
+        <div class="changelog-header">v1.0.2 - More Bug Fixes - 4/20/2026</div>
+        <li class="innerli">Changed box colors to properly match keyboard display, and removed janky and unfinished coloring features.</li>
+        <li class="innerli">Fixed datamuse dictionary search</li>
         </details>`,
         game: 'Wordle',
         preview: `<img id="previewImg" src="/wordle/wordlepreview.png" alt="Wordle Preview" height="500">`,
         playButton: `<button id="button" onclick="play()">Play</button>`,
-        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are janky right now, will be fixed in the future.',
+        guide: 'Try to guess a random 5 letter word in 6 guesses or less! If any of the letters of your guess turn teal, that letter is in the correct spot. If the letter turns yellow, the word contains that letter, but it is not in the correct spot. If the letter turns to a faded green, the letter is not in the word. Good luck!<br><br>Note: Box colors are mising features right now, will be changed in the future.',
         specifics: `<details>
         <summary class="summaries">Specifics</summary>
         <hr style="border: solid 1px #4d664d; margin-top: 5px; margin-bottom: 10px;">
@@ -317,40 +329,40 @@ app.get('/wordle', isAuthenticated, (req, res) => {
                 </details>
         </details>`
     };
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v0.3.6', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v0.4.1', data: data });
 });
 
 app.get('/game_2048', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/2048/game_2048', { user: req.session.user, gp: req.session.gp, pageName: '2048', version: 'v1.0.2' });
+        res.render('games/2048/game_2048', { user: req.session.user, gp: req.session.gp, pageName: '2048', version: 'v1.0.3' });
     }
 });
 
 app.get('/game_snake', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/snake/game_snake', { user: req.session.user, gp: req.session.gp, pageName: 'Snake', version: 'v1.0.1' });
+        res.render('games/snake/game_snake', { user: req.session.user, gp: req.session.gp, pageName: 'Snake', version: 'v1.0.2' });
     }
 });
 
 app.get('/game_stack', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/stack/game_stack', { user: req.session.user, gp: req.session.gp, pageName: 'Stack', version: 'v1.0.0' });
+        res.render('games/stack/game_stack', { user: req.session.user, gp: req.session.gp, pageName: 'Stack', version: 'v1.0.1' });
     }
 });
 
 app.get('/game_alchemy', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
         res.render('games/alchemy/game_alchemy', { user: req.session.user, gp: req.session.gp, pageName: 'Alchemy', version: 'v1.2.0' });
     }
@@ -359,9 +371,9 @@ app.get('/game_alchemy', isAuthenticated, (req, res) => {
 app.get('/game_wordle', isAuthenticated, (req, res) => {
     if (!paid) {
         // if the user hasn't paid, send user back to home page
-        res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.3.6' });
+        res.redirect('/');
     } else {
-        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.0' });
+        res.render('games/wordle/game_wordle', { user: req.session.user, gp: req.session.gp, pageName: 'Wordle', version: 'v1.0.2' });
     }
 });
 
@@ -417,9 +429,9 @@ io.on('connection', (socket) => {
         console.log('Play Game Data:', data);
         console.log(`User ${user} is attempting to play ${game} that costs ${cost} GP.`);
 
-        db.get(`SELECT CONVEERT(str, ${game}) FROM onetime WHERE user_id = (SELECT id FROM users WHERE username = ?)`, [user], (err, row) => {
+        db.get(`SELECT ${game} FROM onetime WHERE user_id = ?`, [user], (err, row) => {
             if (err) {
-                console.error(`The game ${game} is not in the onetime table, or there was an error retrieving it. Continuing as a normal game.`);
+                console.error(`The game ${game} is not in the onetime table, or there was an error retrieving it.Continuing as a normal game.`);
                 //if the game is not in the onetime table, proceed with normal transaction
                 return db.get('SELECT gp FROM users WHERE username = ?', [user], (err, row) => {
                     if (err) {
@@ -460,7 +472,7 @@ io.on('connection', (socket) => {
                     if (row.gp < cost) {
                         socket.emit('insufficientFunds');
                     } else {
-                        // Deduct GP and update the onetime table if necessary
+                        //deduct GP and update the onetime table if necessary
                         socket.emit('confirmCost', cost);
 
                         socket.on('confirmPlay', () => {
@@ -469,7 +481,7 @@ io.on('connection', (socket) => {
                                     return console.error(err.message);
                                 }
 
-                                // Update the onetime table if the game exists
+                                //update the onetime table if the game exists
                                 db.run(`UPDATE onetime SET ${game} = 1 WHERE user_id = (SELECT id FROM users WHERE username = ?)`, [user], function (err) {
                                     if (err) {
                                         return console.error(err.message);
@@ -477,7 +489,7 @@ io.on('connection', (socket) => {
                                     console.log(`Set user ${user} as having paid for onetime game ${game}.`);
                                 });
 
-                                // Allow relocate to function properly
+                                //allow relocate to function properly
                                 paid = true;
                                 socket.emit('relocate');
                             });
@@ -485,7 +497,27 @@ io.on('connection', (socket) => {
                     }
                 });
             } else {
-                console.log('something went wrong')
+                db.get('SELECT gp FROM users WHERE username = ?', [user], (err, row) => {
+                    if (err) {
+                        return console.error(err.message);
+                    }
+
+                    if (row.gp < cost) {
+                        socket.emit('insufficientFunds', cost);
+                    } else {
+                        socket.emit('confirmCost', cost);
+
+                        socket.on('confirmPlay', () => {
+                            db.run('UPDATE users SET gp = gp - ? WHERE username = ?', [cost, user], function (err) {
+                                if (err) {
+                                    return console.error(err.message);
+                                }
+                                paid = true;
+                                socket.emit('relocate');
+                            });
+                        });
+                    }
+                });
             }
         });
     });
@@ -1050,6 +1082,7 @@ io.on('connection', (socket) => {
             new Element("The Amazing Digital Circus", "🎪 The Amazing Digital Circus", "media", ["Circus", "Computer"], true),
             new Element("Caine", "🔴 Caine", "media", ["The Amazing Digital Circus", "AI"], true),
             new Element("Bubble", "🫧 Bubble", "media", ["The Amazing Digital Circus", "Air Bubble"], true),
+            new Element("Osama Bin Laden", "👹 Osama Bin Laden", "notableFigures", ["9/11", "Human"]),
         ];
 
         socket.emit('elementsData', returnDict);
@@ -1072,11 +1105,11 @@ io.on('connection', (socket) => {
         });
     });
 
-    io.on('disconnect', () => {
-        console.log('Disconnected from auth server');
-    });
-
     // START SERVER
+});
+
+io.on('disconnect', () => {
+    console.log('Disconnected from auth server');
 });
 
 server.listen(PORT, () => {

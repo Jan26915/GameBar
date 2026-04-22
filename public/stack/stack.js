@@ -54,7 +54,7 @@ class Block {
                 speed = 0
         }
 
-        const colors = ['#D6E8E3', '#A6DFCF', '#6DFFC2', '#5FD182', '#3FA85C', '#18A840', '#18A8A4', '#189995', '#13845F', '#0F4231']
+        const colors = ['#D6E8E3', '#A6DFCF', '#6DFFC2', '#5FD182', '#3fa85c', '#18A840', '#18A8A4', '#189995', '#13845F', '#0F4231']
         const color = colors[blocksList.length % colors.length] //iterate through colors based on the number of blocks stacked
 
         const block = new Block(0, lastBlock.y - 50, lastBlock.width, 50, color, speed)
@@ -226,32 +226,26 @@ function stackBlock() {
         block.width -= lastBlock.x - block.x
         block.x = lastBlock.x
         perfectCounter = 0
+        points++;
         displayMessage('Good! +1 point!')
     } else if (block.x + block.width > lastBlock.x + lastBlock.width) {
         block.width -= (block.x + block.width) - (lastBlock.x + lastBlock.width)
         perfectCounter = 0
+        points++;
         displayMessage('Good! +1 point!')
     }
 
     if (blocksList.length > 5) {
         const lastFiveBlocks = blocksList.slice(-5)
-        let alignedForBonus = false
 
         //check if the last 5 blocks are aligned within a certain threshold
         if (perfectCounter >= 5 && lastFiveBlocks.every(b => Math.abs(b.x - lastBlock.x) <= perfectThreshold)) {
-            alignedForBonus = true
-        }
-
-        if (alignedForBonus === true) {
             displayMessage('Bonus! +4 extra points!')
             points += 4
             perfectCounter = 0
-            alignedForBonus = false
-            return
         }
     }
 
-    points++
     blocksList.push(block)
 
     createNewBlock(currentMode)
