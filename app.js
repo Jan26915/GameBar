@@ -86,7 +86,7 @@ app.get('/login', (req, res) => {
 
                 // Create a onetime entry for the new user
                 db.run(
-                    'INSERT OR IGNORE INTO onetime (user_id) VALUES ((SELECT id FROM users WHERE username = ?))',
+                    'INSERT OR IGNORE INTO onetime (user) VALUES ((SELECT username FROM users WHERE username = ?))',
                     [tokenData.displayName],
                     function (err) {
                         if (err) {
@@ -113,13 +113,13 @@ app.get('/', isAuthenticated, (req, res) => {
             console.error(err.message);
         } else {
             req.session.gp = row ? row.gp : 0;
-            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.1' });
+            res.render('index', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v1.0.0' });
         }
     });
 });
 
 app.get('/changes', isAuthenticated, (req, res) => {
-    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v0.4.1' });
+    res.render('changes', { user: req.session.user, gp: req.session.gp, pageName: 'Gamebar', version: 'v1.0.0' });
 });
 
 app.get('/2048', isAuthenticated, (req, res) => {
@@ -176,7 +176,7 @@ app.get('/2048', isAuthenticated, (req, res) => {
         </li>
         </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v0.4.1', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 45, pageName: 'Gamebar', version: 'v1.0.0', data: data });
 });
 
 app.get('/snake', isAuthenticated, (req, res) => {
@@ -215,7 +215,7 @@ app.get('/snake', isAuthenticated, (req, res) => {
                 <li class="innerli">If the snake does not collide with itself or the border, and manages to fill the board, the player wins.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v0.4.1', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 25, pageName: 'Gamebar', version: 'v1.0.0', data: data });
 }
 );
 
@@ -252,7 +252,7 @@ app.get('/stack', isAuthenticated, (req, res) => {
                 <li class="innerli">If the player clicks when the block is not aligned at all, the game ends and displays a message based on the player's score and perfect counter.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v0.4.1', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 30, pageName: 'Gamebar', version: 'v1.0.0', data: data });
 });
 
 app.get('/alchemy', isAuthenticated, (req, res) => {
@@ -276,6 +276,9 @@ app.get('/alchemy', isAuthenticated, (req, res) => {
                 <li class="innerli">Added 34 new elements</li>
                 <div class="changelog-header">v1.2.0 - Game Saving - 4/08/2026</div>
                 <li class="innerli">Implemented game saving functionality</li>
+                <div class="changelog-header">v1.2.1 - Bug Fix - 4/27/2026</div>
+                <li class="innerli">Fixed one-time purchase not saving properly</li>
+                <li class="innerli">Fixed issue with Osama Bin Laden</li>
             </details>`,
         game: 'Alchemy',
         preview: `<img id="previewImg" src="/alchemy/alchemypreview.png" alt="Alchemy Preview" height="500">`,
@@ -294,7 +297,7 @@ app.get('/alchemy', isAuthenticated, (req, res) => {
                 <li class="innerli">If dropped on the sidebar from the game area, delete the element. If dropped on the game area, move the element there.</li>
                 </details>`
     }
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v0.4.1', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 799, pageName: 'Gamebar', version: 'v1.0.0', data: data });
 });
 
 app.get('/wordle', isAuthenticated, (req, res) => {
@@ -329,7 +332,7 @@ app.get('/wordle', isAuthenticated, (req, res) => {
                 </details>
         </details>`
     };
-    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v0.4.1', data: data });
+    res.render('page', { user: req.session.user, gp: req.session.gp, cost: 20, pageName: 'Gamebar', version: 'v1.0.0', data: data });
 });
 
 app.get('/game_2048', isAuthenticated, (req, res) => {
@@ -364,7 +367,7 @@ app.get('/game_alchemy', isAuthenticated, (req, res) => {
         // if the user hasn't paid, send user back to home page
         res.redirect('/');
     } else {
-        res.render('games/alchemy/game_alchemy', { user: req.session.user, gp: req.session.gp, pageName: 'Alchemy', version: 'v1.2.0' });
+        res.render('games/alchemy/game_alchemy', { user: req.session.user, gp: req.session.gp, pageName: 'Alchemy', version: 'v1.2.1' });
     }
 });
 
@@ -400,11 +403,11 @@ io.on('connection', (socket) => {
             amount: amount,
             reason: 'Gamebar Transaction',
             pin: pin,
+            pool: true
         };
 
         const gamePoints = reward;
         const username = user;
-        console.log(data);
 
         authSocket.emit('transferDigipogs', data);
 
@@ -429,7 +432,7 @@ io.on('connection', (socket) => {
         console.log('Play Game Data:', data);
         console.log(`User ${user} is attempting to play ${game} that costs ${cost} GP.`);
 
-        db.get(`SELECT ? FROM onetime WHERE user_id = ?`, [game, user], (err, row) => {
+        db.get(`SELECT ${game} FROM onetime WHERE user = ?`, [user], (err, row) => {
             if (err) {
                 console.error(`The game ${game} is not in the onetime table, or there was an error retrieving it.Continuing as a normal game.`);
                 //if the game is not in the onetime table, proceed with normal transaction
@@ -450,7 +453,6 @@ io.on('connection', (socket) => {
                                 }
                                 paid = true;
                                 socket.emit('relocate');
-                                console.log('not in onetime')
                             });
                         });
                     }
@@ -463,7 +465,6 @@ io.on('connection', (socket) => {
                 console.log(`User ${user} has already paid for the onetime game ${game}.`);
                 paid = true;
                 socket.emit('onetimePaid');
-                console.loog('onetime, paid');
             } else if (row && row[game] == 0) {
                 //check if the user has enough gp
                 db.get('SELECT gp FROM users WHERE username = ?', [user], (err, row) => {
@@ -484,7 +485,7 @@ io.on('connection', (socket) => {
                                 }
 
                                 //update the onetime table if the game exists
-                                db.run(`UPDATE onetime SET ${game} = 1 WHERE user_id = (SELECT id FROM users WHERE username = ?)`, [user], function (err) {
+                                db.run(`UPDATE onetime SET ${game} = 1 WHERE user = ?`, [user], function (err) {
                                     if (err) {
                                         return console.error(err.message);
                                     }
@@ -494,7 +495,6 @@ io.on('connection', (socket) => {
                                 //allow relocate to function properly
                                 paid = true;
                                 socket.emit('relocate');
-                                console.log('in onetime, not paid');
                             });
                         });
                     }
@@ -517,7 +517,6 @@ io.on('connection', (socket) => {
                                 }
                                 paid = true;
                                 socket.emit('relocate');
-                                console.log('In onetime, not a number');
                             });
                         });
                     }
@@ -988,6 +987,8 @@ io.on('connection', (socket) => {
             new Element("Psychology", "🧠 Psychology", "science", ["Brain", "Science"], true),
             new Element("Philosophy", "📜 Philosophy", "science", ["Idea", "Science"], true),
             new Element("Meteorology", "🌪️ Meteorology", "science", ["Weather", "Science"], true),
+            new Element("AI", "🤖 AI", "science", ["Electricity", "Knowledge"], true),
+            new Element("Robot", "🤖 Robot", "humanInnovation", ["AI", "Metal"], true),
             new Element("Baby Oil", "🧴 Baby Oil", "nature", ["Baby", "Oil"], true),
             new Element("P. Diddy", "🧴 P. Diddy", "notableFigures", ["Baby Oil", "Human"], true),
             new Element("School", "🏫 School", "humanInnovation", ["Knowledge", "House"], true),
@@ -1078,15 +1079,13 @@ io.on('connection', (socket) => {
             new Element("HAL 9000", "🧠 HAL 9000", "media", ["Space Odyssey", "AI"], true),
             new Element("I Have No Mouth, and I Must Scream", "😱 I Have No Mouth, and I Must Scream", "media", ["AI", "Story"], true),
             new Element("AM", "🧠 AM", "media", ["I Have No Mouth, and I Must Scream", "AI"], true),
-            new Element("AI", "🤖 AI", "science", ["Electricity", "Knowledge"], true),
-            new Element("Robot", "🤖 Robot", "humanInnovation", ["AI", "Metal"], true),
             new Element("Camping", "⛺ Camping", "humanInnovation", ["Forest", "Entertainment"], true),
             new Element("Tent", "⛺ Tent", "humanInnovation", ["Camping", "House"], true),
             new Element("Circus", "🎪 Circus", "humanInnovation", ["Tent", "Entertainment"], true),
             new Element("The Amazing Digital Circus", "🎪 The Amazing Digital Circus", "media", ["Circus", "Computer"], true),
             new Element("Caine", "🔴 Caine", "media", ["The Amazing Digital Circus", "AI"], true),
             new Element("Bubble", "🫧 Bubble", "media", ["The Amazing Digital Circus", "Air Bubble"], true),
-            new Element("Osama Bin Laden", "👹 Osama Bin Laden", "notableFigures", ["9/11", "Human"]),
+            new Element("Osama Bin Laden", "👹 Osama Bin Laden", "notableFigures", ["9/11", "Human"], true),
         ];
 
         socket.emit('elementsData', returnDict);
